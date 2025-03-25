@@ -1,0 +1,28 @@
+/* Disable text selection and pointer events on PDF */
+.pdf-container {
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+  }
+  
+  /* Hide PDF.js text layer */
+  .react-pdf__Page__textContent {
+    display: none !important;
+  }
+  
+  /* Optional: Add watermark */
+  .react-pdf__Page__canvas {
+    position: relative;
+  }
+  
+  .react-pdf__Page__canvas::after {
+    content: "Protected Content";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(-45deg);
+    font-size: 48px;
+    color: rgba(0, 0, 0, 0.1);
+    pointer-events: none;
+  }

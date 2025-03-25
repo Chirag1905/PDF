@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vite + React</title>
+  </head>
+  <body oncontextmenu="return false;">
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+    <script>
+      document.onkeydown = function (e) {
+        if (event.keyCode == 123) {
+          return false;
+        }
+        if (e.ctrlKey && e.shiftKey && e.keyCode == "I".charCodeAt(0)) {
+          return false;
+        }
+        if (e.ctrlKey && e.shiftKey && e.keyCode == "J".charCodeAt(0)) {
+          return false;
+        }
+        if (e.ctrlKey && e.keyCode == "U".charCodeAt(0)) {
+          return false;
+        }
+      };
+
+      document.addEventListener("contextmenu", (event) =>
+        event.preventDefault()
+      );
+      document.addEventListener("keydown", (event) => {
+        if (event.key === "PrintScreen" || event.key === "F12") {
+          event.preventDefault();
+          alert("Screenshots are restricted!");
+        }
+      });
+
+      document.addEventListener("keyup", function (e) {
+        if (e.key === "PrintScreen") {
+          navigator.clipboard.writeText("");
+          alert("Screenshots are restricted!");
+        }
+      });
+
+      document.addEventListener("keydown", (event) => {
+        if (event.key === "PrintScreen") {
+          event.preventDefault();
+          alert("Screenshots are restricted!");
+          return false;
+        }
+        if (event.ctrlKey && event.shiftKey && event.key === "I") {
+          // Ctrl + Shift + I (DevTools)
+          event.preventDefault();
+          alert("Developer Tools are disabled!");
+          return false;
+        }
+        if (event.ctrlKey && event.key === "s") {
+          // Ctrl + S (Save Page)
+          event.preventDefault();
+          alert("Saving the page is restricted!");
+          return false;
+        }
+        if (event.ctrlKey && event.key === "p") {
+          // Ctrl + P (Print)
+          event.preventDefault();
+          alert("Printing is restricted!");
+          return false;
+        }
+        if (event.key === "F12") {
+          // F12 (DevTools)
+          event.preventDefault();
+          alert("Developer Tools are disabled!");
+          return false;
+        }
+      });
+
+      document.addEventListener("keydown", (event) => {
+        if (event.key === "Insert" || event.key === "PrintScreen") {
+          event.preventDefault();
+          alert("This key is disabled!");
+          return false;
+        }
+      });
+
+      document.addEventListener("keydown", (event) => {
+        if (event.key === "PrintScreen") {
+          event.preventDefault();
+          navigator.clipboard.writeText(""); // Clear clipboard
+          alert("Screenshots are restricted!");
+        }
+      });
+
+      document.addEventListener("keyup", (event) => {
+        if (event.key === "PrintScreen") {
+          navigator.clipboard.writeText(""); // Clear clipboard again for extra security
+          alert("Screenshots are restricted!");
+        }
+      });
+
+      document.addEventListener("keydown", (event) => {
+        if (event.key === "PrintScreen") {
+          event.preventDefault();
+          navigator.clipboard.writeText(""); // Clear clipboard
+          alert("Screenshots are restricted!");
+        }
+      });
+
+      document.addEventListener("keyup", (event) => {
+        if (event.key === "PrintScreen") {
+          navigator.clipboard.writeText(""); // Clear clipboard again
+          alert("Screenshots are restricted!");
+        }
+      });
+    </script>
+  </body>
+</html>
