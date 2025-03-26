@@ -1,5 +1,5 @@
 // import React, { useEffect, useRef, useState } from "react";
-// import { Viewer, Worker } from "@react-pdf-viewer/core";
+// import { Viewer, Worker, ZoomInButton, ZoomOutButton } from "@react-pdf-viewer/core";
 // import "@react-pdf-viewer/core/lib/styles/index.css";
 // import { pdfjs } from "react-pdf";
 
@@ -49,21 +49,21 @@
 //                 // Block single keys
 //                 if (blockedKeys.includes(event.key)) {
 //                     event.preventDefault();
-//                     alert('This action is restricted for security reasons');
+//                     // alert('This action is restricted for security reasons');
 //                     return false;
 //                 }
 
 //                 // Block key combinations
 //                 if (isCombinationBlocked(event)) {
 //                     event.preventDefault();
-//                     alert('This action is restricted for security reasons');
+//                     // alert('This action is restricted for security reasons');
 //                     return false;
 //                 }
 
 //                 // Prevent screenshots on Windows (Windows + Shift + S)
 //                 if (event.key === 's' && event.shiftKey && (event.metaKey || event.ctrlKey)) {
 //                     event.preventDefault();
-//                     alert('Screenshots are disabled for security reasons');
+//                     // alert('Screenshots are disabled for security reasons');
 //                     return false;
 //                 }
 //             };
@@ -134,7 +134,7 @@
 //             const handleMobileVisibilityChange = () => {
 //                 if (document.hidden) {
 //                     setBlurred(true);
-//                     alert('Switching apps or taking screenshots is not allowed!');
+//                     // alert('Switching apps or taking screenshots is not allowed!');
 //                 } else {
 //                     setBlurred(false);
 //                 }
@@ -147,7 +147,7 @@
 //                     e.preventDefault();
 //                     setBlurred(true);
 //                     setTimeout(() => setBlurred(false), 2000);
-//                     alert('Screenshots are disabled for security reasons');
+//                     // alert('Screenshots are disabled for security reasons');
 //                 }
 //             };
 
@@ -204,11 +204,47 @@
 //                         renderToolbar={(Toolbar) => (
 //                             <Toolbar>
 //                                 {(slots) => {
-//                                     const { Download } = slots;
+//                                     const { Download, ZoomIn, ZoomOut } = slots;
 //                                     return (
-//                                         <>
+//                                         <div style={{ display: 'flex', alignItems: 'center' }}>
+//                                             <div style={{ padding: '0 4px' }}>
+//                                                 <ZoomOut>
+//                                                     {(props) => (
+//                                                         <button
+//                                                             style={{
+//                                                                 backgroundColor: '#fff',
+//                                                                 border: '1px solid rgba(0, 0, 0, 0.3)',
+//                                                                 borderRadius: '4px',
+//                                                                 cursor: 'pointer',
+//                                                                 padding: '8px',
+//                                                             }}
+//                                                             onClick={props.onClick}
+//                                                         >
+//                                                             Zoom Out
+//                                                         </button>
+//                                                     )}
+//                                                 </ZoomOut>
+//                                             </div>
+//                                             <div style={{ padding: '0 4px' }}>
+//                                                 <ZoomIn>
+//                                                     {(props) => (
+//                                                         <button
+//                                                             style={{
+//                                                                 backgroundColor: '#fff',
+//                                                                 border: '1px solid rgba(0, 0, 0, 0.3)',
+//                                                                 borderRadius: '4px',
+//                                                                 cursor: 'pointer',
+//                                                                 padding: '8px',
+//                                                             }}
+//                                                             onClick={props.onClick}
+//                                                         >
+//                                                             Zoom In
+//                                                         </button>
+//                                                     )}
+//                                                 </ZoomIn>
+//                                             </div>
 //                                             {Download && <Download children={() => <></>} />}
-//                                         </>
+//                                         </div>
 //                                     );
 //                                 }}
 //                             </Toolbar>
@@ -271,8 +307,9 @@
 
 // export default ProtectedPDFViewer;
 
+
 import React, { useEffect, useRef, useState } from "react";
-import { Viewer, Worker, ZoomInButton, ZoomOutButton } from "@react-pdf-viewer/core";
+import { Viewer, Worker } from "@react-pdf-viewer/core";
 import "@react-pdf-viewer/core/lib/styles/index.css";
 import { pdfjs } from "react-pdf";
 
@@ -284,6 +321,7 @@ const ProtectedPDFViewer = ({ pdfUrl }) => {
     const overlayRef = useRef(null);
     const [isMobile, setIsMobile] = useState(false);
     const [blurred, setBlurred] = useState(false);
+    const [warningVisible, setWarningVisible] = useState(false);
 
     useEffect(() => {
         // Comprehensive security measures
@@ -322,21 +360,18 @@ const ProtectedPDFViewer = ({ pdfUrl }) => {
                 // Block single keys
                 if (blockedKeys.includes(event.key)) {
                     event.preventDefault();
-                    // alert('This action is restricted for security reasons');
                     return false;
                 }
 
                 // Block key combinations
                 if (isCombinationBlocked(event)) {
                     event.preventDefault();
-                    // alert('This action is restricted for security reasons');
                     return false;
                 }
 
                 // Prevent screenshots on Windows (Windows + Shift + S)
                 if (event.key === 's' && event.shiftKey && (event.metaKey || event.ctrlKey)) {
                     event.preventDefault();
-                    // alert('Screenshots are disabled for security reasons');
                     return false;
                 }
             };
@@ -365,14 +400,25 @@ const ProtectedPDFViewer = ({ pdfUrl }) => {
             // Clear clipboard periodically
             const clipboardInterval = setInterval(function () {
                 navigator.clipboard.writeText('').catch(function () { });
-            }, 2000);
+            }, 1000);
 
             // Prevent taking photos of the screen with mobile devices
             const handleVisibilityChange = function () {
                 if (document.hidden) {
-                    alert('Switching away from this page is not allowed');
+                    setBlurred(true);
+                    setWarningVisible(true);
                     document.title = 'Please return to the document';
+
+                    // Detect if user might have taken a screenshot
+                    setTimeout(() => {
+                        if (document.hidden) {
+                            // User hasn't returned after 1 second - likely took a screenshot
+                            setWarningVisible(true);
+                        }
+                    }, 1000);
                 } else {
+                    setBlurred(false);
+                    setWarningVisible(false);
                     document.title = 'Secure PDF Viewer';
                 }
             };
@@ -403,13 +449,17 @@ const ProtectedPDFViewer = ({ pdfUrl }) => {
 
         // Mobile-specific protections
         if (mobile) {
-            // Detect when app loses focus (potential screenshot attempt)
-            const handleMobileVisibilityChange = () => {
-                if (document.hidden) {
+            // More aggressive protection for mobile devices
+            const handleTouchEvents = (e) => {
+                // Detect multi-touch which might be used for screenshot gestures
+                if (e.touches.length > 1) {
+                    e.preventDefault();
                     setBlurred(true);
-                    // alert('Switching apps or taking screenshots is not allowed!');
-                } else {
-                    setBlurred(false);
+                    setWarningVisible(true);
+                    setTimeout(() => {
+                        setBlurred(false);
+                        setWarningVisible(false);
+                    }, 3000);
                 }
             };
 
@@ -419,29 +469,35 @@ const ProtectedPDFViewer = ({ pdfUrl }) => {
                 if (e.key === 'Power' || e.keyCode === 24) { // 24 = Volume Down
                     e.preventDefault();
                     setBlurred(true);
-                    setTimeout(() => setBlurred(false), 2000);
-                    // alert('Screenshots are disabled for security reasons');
+                    setWarningVisible(true);
+                    setTimeout(() => {
+                        setBlurred(false);
+                        setWarningVisible(false);
+                    }, 3000);
                 }
             };
 
-            document.addEventListener('visibilitychange', handleMobileVisibilityChange);
+            document.addEventListener('touchstart', handleTouchEvents, { passive: false });
+            document.addEventListener('touchmove', handleTouchEvents, { passive: false });
             document.addEventListener('keydown', handleMobileKeyDown);
 
-            // Dynamic watermark with timestamp
+            // Dynamic watermark with timestamp and user info
             const updateWatermark = () => {
                 const timestamp = new Date().toLocaleString();
+                const userAgent = navigator.userAgent;
                 const watermark = document.getElementById('dynamic-watermark');
                 if (watermark) {
-                    watermark.style.backgroundImage = `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400" opacity="0.1"><text x="50" y="50" font-family="Arial" font-size="20" fill="red">CONFIDENTIAL - ${timestamp}</text></svg>')`;
+                    watermark.style.backgroundImage = `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400" opacity="0.15"><text x="20" y="30" font-family="Arial" font-size="12" fill="red">CONFIDENTIAL</text><text x="20" y="50" font-family="Arial" font-size="10" fill="red">${timestamp}</text><text x="20" y="70" font-family="Arial" font-size="8" fill="red">${userAgent}</text></svg>')`;
                 }
             };
 
-            const watermarkInterval = setInterval(updateWatermark, 5000);
+            const watermarkInterval = setInterval(updateWatermark, 3000);
             updateWatermark(); // Initial watermark
 
             return () => {
                 cleanupSecurity();
-                document.removeEventListener('visibilitychange', handleMobileVisibilityChange);
+                document.removeEventListener('touchstart', handleTouchEvents);
+                document.removeEventListener('touchmove', handleTouchEvents);
                 document.removeEventListener('keydown', handleMobileKeyDown);
                 clearInterval(watermarkInterval);
             };
@@ -458,7 +514,8 @@ const ProtectedPDFViewer = ({ pdfUrl }) => {
                 position: "relative",
                 overflow: "hidden",
                 filter: blurred ? 'blur(8px)' : 'none',
-                transition: 'filter 0.3s ease'
+                transition: 'filter 0.3s ease',
+                backgroundColor: blurred ? 'rgba(0,0,0,0.7)' : 'transparent'
             }}
         >
             {/* Main container with scroll */}
@@ -551,15 +608,41 @@ const ProtectedPDFViewer = ({ pdfUrl }) => {
                     left: 0,
                     width: "100%",
                     height: "100%",
-                    backgroundImage: "url('data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"400\" height=\"400\" opacity=\"0.05\"><text x=\"50\" y=\"50\" font-family=\"Arial\" font-size=\"20\" fill=\"black\">CONFIDENTIAL - DO NOT COPY</text></svg>')",
                     backgroundRepeat: "repeat",
                     zIndex: 9,
                     pointerEvents: "none",
+                    opacity: 0.5
                 }}
             />
 
+            {/* Warning message when screenshot is attempted */}
+            {warningVisible && (
+                <div style={{
+                    position: "fixed",
+                    top: 0,
+                    left: 0,
+                    width: "100%",
+                    height: "100%",
+                    backgroundColor: "rgba(0,0,0,0.8)",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    zIndex: 100,
+                    color: "white",
+                    fontSize: "1.5rem",
+                    textAlign: "center",
+                    flexDirection: "column"
+                }}>
+                    <div style={{ marginBottom: "20px" }}>⚠️ Security Alert ⚠️</div>
+                    <div>Screenshots are not allowed for this confidential document</div>
+                    <div style={{ marginTop: "20px", fontSize: "1rem" }}>
+                        The document will be unblurred when you return to the app
+                    </div>
+                </div>
+            )}
+
             {/* Mobile-specific warning */}
-            {isMobile && (
+            {isMobile && !warningVisible && (
                 <div style={{
                     position: "absolute",
                     bottom: "20px",
@@ -569,9 +652,11 @@ const ProtectedPDFViewer = ({ pdfUrl }) => {
                     color: "red",
                     fontWeight: "bold",
                     zIndex: 11,
-                    pointerEvents: "none"
+                    pointerEvents: "none",
+                    backgroundColor: "rgba(0,0,0,0.5)",
+                    padding: "10px"
                 }}>
-                    Screenshots are disabled on this device
+                    Screenshots are disabled on this device. Attempting to capture screenshots will blur the document.
                 </div>
             )}
         </div>
