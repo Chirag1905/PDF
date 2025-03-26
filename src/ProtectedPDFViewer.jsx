@@ -310,6 +310,7 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import { Viewer, Worker } from "@react-pdf-viewer/core";
+import { zoomPlugin } from "@react-pdf-viewer/zoom";
 import "@react-pdf-viewer/core/lib/styles/index.css";
 import { pdfjs } from "react-pdf";
 
@@ -322,6 +323,10 @@ const ProtectedPDFViewer = ({ pdfUrl }) => {
     const [isMobile, setIsMobile] = useState(false);
     const [blurred, setBlurred] = useState(false);
     const [warningVisible, setWarningVisible] = useState(false);
+
+    // Initialize zoom plugin
+    const zoomPluginInstance = zoomPlugin();
+    const { ZoomInButton, ZoomOutButton } = zoomPluginInstance;
 
     useEffect(() => {
         // Comprehensive security measures
@@ -408,7 +413,7 @@ const ProtectedPDFViewer = ({ pdfUrl }) => {
                     setBlurred(true);
                     setWarningVisible(true);
                     document.title = 'Please return to the document';
-
+                    
                     // Detect if user might have taken a screenshot
                     setTimeout(() => {
                         if (document.hidden) {
@@ -531,6 +536,7 @@ const ProtectedPDFViewer = ({ pdfUrl }) => {
                 <Worker workerUrl={`/pdf.worker.min.js`}>
                     <Viewer
                         fileUrl={pdfUrl}
+                        plugins={[zoomPluginInstance]} // Add the zoom plugin here
                         renderToolbar={(Toolbar) => (
                             <Toolbar>
                                 {(slots) => {
