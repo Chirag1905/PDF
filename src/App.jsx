@@ -4,7 +4,7 @@ import ProtectedPDFViewer from './ProtectedPDFViewer';
 const App = () => {
   // List of available PDFs
   const pdfList = [
-    { id: 1, name: 'Screenshot 4', path: '/Starfall.pdf' },
+    { id: 1, name: 'Screenshot 5', path: '/Starfall.pdf' },
     { id: 2, name: 'Document 2', path: '/Maths.pdf' },
     { id: 3, name: 'Document 3', path: '/Science.pdf' },
   ];
