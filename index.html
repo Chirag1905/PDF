@@ -6,17 +6,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; media-src 'self'; frame-src 'none'; object-src 'none';">
     <title>Secure PDF Viewer</title>
-    <style>
-      html, body {
-        overflow: hidden;
-        touch-action: none;
-      }
-    </style>
   </head>
   <body oncontextmenu="return false;" style="margin: 0; padding: 0; overflow: hidden;">
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
-    <script>
+    <!-- <script>
       // Comprehensive security measures
       (function() {
         // Disable all keyboard shortcuts that could expose content
@@ -124,6 +118,6 @@
           }
         });
       })();
-    </script>
+    </script> -->
   </body>
 </html>
